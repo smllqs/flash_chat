@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat_v2/components/rounded_button.dart';
 import 'package:flash_chat_v2/constants.dart';
+import 'package:flash_chat_v2/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +15,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+  final Logger _logger = Logger(
+      printer: PrettyPrinter(
+    printEmojis: true,
+    printTime: true,
+    colors: true,
+  ));
+  late String email;
+  late String password;
+
+  void navigateToChat() {
+    Navigator.pushNamed(context, ChatScreen.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                email = value;
               },
               decoration:
                   kTextFieldDecoration.copyWith(hintText: 'enter your email'),
@@ -48,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
               textAlign: TextAlign.center,
               onChanged: (value) {
-                //Do something with the user input.
+                password = value;
               },
               decoration: kTextFieldDecoration.copyWith(
                   hintText: 'enter your password'),
@@ -57,7 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 24.0,
             ),
             RoundedButton(
-                text: 'Login', action: () {}, color: Colors.lightBlueAccent)
+              text: 'Login',
+              color: Colors.lightBlueAccent,
+              action: () async {
+                try {
+                  final loggingInUser = await _auth.signInWithEmailAndPassword(
+                      email: email, password: password);
+                  navigateToChat();
+                } catch (e) {
+                  _logger.e('an error occured');
+                }
+              },
+            )
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flash_chat_v2/constants.dart';
 import 'package:flash_chat_v2/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -18,6 +19,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isUserNull = true;
   late String email;
   late String password;
+  final Logger _logger = Logger(
+      printer: PrettyPrinter(
+    printEmojis: true,
+    printTime: true,
+    colors: true,
+  ));
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +32,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (isUserNull == false) {
         Navigator.pushNamed(context, ChatScreen.id);
       } else {
-        print('user not found.');
+        _logger.e('user not found');
       }
     }
 
@@ -86,7 +93,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     userNullChecker();
                   }
                 } catch (e) {
-                  print(e);
+                  _logger.e('error occurred');
                 }
               },
             )
