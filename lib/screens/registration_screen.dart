@@ -28,12 +28,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void userNullChecker() {
-      if (isUserNull == false) {
-        Navigator.pushNamed(context, ChatScreen.id);
-      } else {
-        _logger.e('user not found');
-      }
+    void navigateToChat() {
+      Navigator.pushNamed(context, ChatScreen.id);
     }
 
     return Scaffold(
@@ -88,10 +84,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     password: password,
                   );
 
-                  if (newUser != null) {
-                    isUserNull = false;
-                    userNullChecker();
-                  }
+                  navigateToChat();
                 } catch (e) {
                   _logger.e('error occurred');
                 }
