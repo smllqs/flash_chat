@@ -4,8 +4,8 @@ class RoundedButton extends StatelessWidget {
   const RoundedButton({
     super.key,
     required this.text,
-    required this.action,
     required this.color,
+    required this.action,
   });
 
   final String text;
