@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat_v2/constants.dart';
+import 'package:flash_chat_v2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,8 +14,10 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   late User loggedInUser;
+  String messageText = '';
 
   @override
   void initState() {
@@ -26,12 +30,24 @@ class _ChatScreenState extends State<ChatScreen> {
       final user = _auth.currentUser;
       if (user != null) {
         loggedInUser = user;
-        print(loggedInUser.email);
+        // print(loggedInUser.email);
       }
     } catch (e) {
-      print(e);
+      FlashChat.logger.e('unable to get current user.');
     }
   }
+
+  // Future<void> getMessages() async {
+  //   try {
+  //     final documents = await _firestore.collection('messages').get();
+  //     final messages = documents.docs.map((e) => e).toList();
+  //     for (var message in messages) {
+  //       print('${message.id} --- ${message.data()}');
+  //     }
+  //   } catch (e) {
+  //     FlashChat.logger.e('an error occurred.');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +58,9 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                _auth.signOut();
-                Navigator.pop(context);
+                // _auth.signOut();
+                // Navigator.pop(context);
+                // getMessages();
               }),
         ],
         title: const Text('⚡️Chat'),
@@ -62,14 +79,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       onChanged: (value) {
-                        //Do something with the user input.
+                        messageText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      //Implement send functionality.
+                    onPressed: () async {
+                      //collection - messages (text, sender)
+                      await _firestore.collection('messages').add({
+                        'text': messageText,
+                        'sender': loggedInUser.email,
+                      });
                     },
                     child: const Text(
                       'Send',
