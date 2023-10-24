@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 const kSendButtonTextStyle = TextStyle(
   color: Colors.lightBlueAccent,
@@ -32,3 +33,4 @@ const kTextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
 );
+

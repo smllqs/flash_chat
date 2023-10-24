@@ -5,6 +5,7 @@ import 'package:flash_chat_v2/screens/login_screen.dart';
 import 'package:flash_chat_v2/screens/registration_screen.dart';
 import 'package:flash_chat_v2/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +15,12 @@ Future<void> main() async {
 
 class FlashChat extends StatelessWidget {
   const FlashChat({super.key});
-
+  static final Logger logger = Logger(
+      printer: PrettyPrinter(
+    printEmojis: true,
+    printTime: true,
+    colors: true,
+  ));
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
