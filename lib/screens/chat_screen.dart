@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat_v2/components/message_bubble.dart';
 import 'package:flash_chat_v2/constants.dart';
 import 'package:flash_chat_v2/main.dart';
+import 'package:flash_chat_v2/services/firebase_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -17,6 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _firestore = FirebaseFirestore.instance;
+  final _firebaseController = FirebaseController();
   final _auth = FirebaseAuth.instance;
   final textController = TextEditingController();
   String messageText = '';
@@ -24,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    _firebaseController.getCurrentUser;
     getCurrentUser();
   }
 
@@ -39,26 +42,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // Future<void> getMessages() async {
-  //   try {
-  //     final documents = await _firestore.collection('messages').get();
-  //     final messages = documents.docs.map((e) => e).toList();
-  //     for (var message in messages) {
-  //       print('${message.id} --- ${message.data()}');
-  //     }
-  //   } catch (e) {
-  //     FlashChat.logger.e('an error occurred.');
-  //   }
-  // }
-
-  void messageStream() async {
-    await for (var snapshot in _firestore.collection('messages').snapshots()) {
-      for (var message in snapshot.docs.reversed) {
-        print(message.data());
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,10 +51,8 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                // _auth.signOut();
-                // Navigator.pop(context);
-                // getMessages();
-                messageStream();
+                _auth.signOut();
+                Navigator.pop(context);
               }),
         ],
         title: const Text('⚡️Chat'),
@@ -100,6 +81,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   TextButton(
                     onPressed: () async {
                       textController.clear();
+                      _firebaseController.populate(messageText);
+
                       await _firestore.collection('messages').add({
                         'timestamp': Timestamp.now(),
                         'text': messageText,
@@ -161,5 +144,3 @@ class MessageStream extends StatelessWidget {
     );
   }
 }
-
-
